@@ -28,11 +28,14 @@ export const ChatInterface = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const thinkingStages = [
-    "Analyzing your question…",
-    "Generating SQL…", 
-    "Querying database…",
-    "Interpreting results…",
-    "Preparing response…"
+    "🤔 Processing question and analyzing intent...",
+    "📋 Phase 1: Selecting appropriate tools and strategy...",
+    "🔧 Phase 2: Gemini tool selection and parameter optimization...",
+    "⚡ Phase 3: Executing NL2SQL transformation...",
+    "🔨 Phase 4: Querying Oracle database with generated SQL...",
+    "🧠 Phase 5: Interpreting query results and data patterns...",
+    "📊 Phase 6: Formatting response and preparing visualization...",
+    "✅ Finalizing enterprise-grade response..."
   ];
 
   useEffect(() => {
