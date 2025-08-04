@@ -52,6 +52,18 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				oracle: {
+					red: 'hsl(var(--oracle-red))',
+					purple: 'hsl(var(--oracle-purple))',
+					dark: 'hsl(var(--oracle-dark))'
+				},
+				chat: {
+					background: 'hsl(var(--chat-background))',
+					userBubble: 'hsl(var(--chat-user-bubble))',
+					systemBubble: 'hsl(var(--chat-system-bubble))',
+					thinkingBg: 'hsl(var(--chat-thinking-bg))',
+					thinkingText: 'hsl(var(--chat-thinking-text))'
+				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
