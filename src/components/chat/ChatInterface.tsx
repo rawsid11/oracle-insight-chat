@@ -158,10 +158,10 @@ export const ChatInterface = () => {
                     />
                   </div>
                   <h2 className="text-2xl font-bold mb-3 bg-gradient-to-r from-oracle-red to-oracle-purple bg-clip-text text-transparent">
-                    Welcome to Oracle NL2SQL Assistant
+                    NL2SQL Assistant built with Oracle MCP
                   </h2>
                   <p className="text-muted-foreground text-lg max-w-md mx-auto">
-                    Ask me anything about your enterprise data in natural language
+                    Ask me anything about your data/schema/table in natural language
                   </p>
                   <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-3 max-w-2xl mx-auto">
                     <div className="p-3 bg-card border border-border/50 rounded-lg text-sm text-muted-foreground">
