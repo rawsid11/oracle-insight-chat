@@ -4,21 +4,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Send, Mic } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ChatMessage } from './ChatMessage';
-import { ThinkingStages } from './ThinkingStages';
+import { AdvancedThinkingStages } from './AdvancedThinkingStages';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { ChatSidebar } from './ChatSidebar';
-
-interface Message {
-  id: string;
-  type: 'user' | 'system';
-  content: string;
-  timestamp: Date;
-  tool?: string;
-  isThinking?: boolean;
-  thinkingStage?: string;
-  tableData?: Array<Record<string, any>>;
-  error?: boolean;
-}
+import { useBookmarks } from '@/hooks/useBookmarks';
+import { Message } from '@/types/chat';
 
 export const ChatInterface = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -27,6 +17,7 @@ export const ChatInterface = () => {
   const [currentThinkingStage, setCurrentThinkingStage] = useState<string>('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { toggleBookmark, isBookmarked } = useBookmarks();
 
   const thinkingStages = [
     "🤔 Processing question and analyzing intent",
@@ -184,11 +175,16 @@ export const ChatInterface = () => {
               )}
               
               {messages.map((message) => (
-                <ChatMessage key={message.id} message={message} />
+                <ChatMessage 
+                  key={message.id} 
+                  message={message}
+                  isBookmarked={isBookmarked(message.id)}
+                  onToggleBookmark={(title, content) => toggleBookmark(message.id, title, content)}
+                />
               ))}
               
               {isLoading && currentThinkingStage && (
-                <ThinkingStages currentStage={currentThinkingStage} />
+                <AdvancedThinkingStages currentStage={currentThinkingStage} />
               )}
               
               <div ref={messagesEndRef} />

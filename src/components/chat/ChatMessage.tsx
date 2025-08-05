@@ -1,25 +1,23 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
-import { AlertTriangle, CheckCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { AlertTriangle, CheckCircle, Bookmark, BookmarkCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { ChatTable } from './ChatTable';
-
-interface Message {
-  id: string;
-  type: 'user' | 'system';
-  content: string;
-  timestamp: Date;
-  tool?: string;
-  tableData?: Array<Record<string, any>>;
-  error?: boolean;
-}
+import { EnhancedTable } from './EnhancedTable';
+import { Message } from '@/types/chat';
 
 interface ChatMessageProps {
   message: Message;
+  isBookmarked?: boolean;
+  onToggleBookmark?: (title: string, content: string) => void;
 }
 
-export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
+export const ChatMessage: React.FC<ChatMessageProps> = ({ 
+  message, 
+  isBookmarked = false, 
+  onToggleBookmark 
+}) => {
   const isUser = message.type === 'user';
   
   const formatTime = (date: Date) => {
@@ -30,12 +28,35 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
     <div className={cn("flex gap-3", isUser ? "justify-end" : "justify-start")}>
       <div className={cn("max-w-[80%] space-y-2", isUser && "order-2")}>
         
-        {/* Tool Badge */}
-        {!isUser && message.tool && (
-          <div className="flex items-center gap-2">
-            <Badge variant="secondary" className="text-xs">
-              🔧 Tool used: {message.tool}
-            </Badge>
+        {/* Tool Badge and Bookmark */}
+        {!isUser && (
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              {message.tool && (
+                <Badge variant="secondary" className="text-xs bg-oracle-red/10 text-oracle-red border-oracle-red/20">
+                  🔧 Tool used: {message.tool}
+                </Badge>
+              )}
+            </div>
+            
+            {/* Bookmark Button */}
+            {onToggleBookmark && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onToggleBookmark(
+                  `${message.tool ? message.tool + ' - ' : ''}Response`,
+                  message.content
+                )}
+                className="h-7 w-7 p-0 hover:bg-oracle-red/10"
+              >
+                {isBookmarked ? (
+                  <BookmarkCheck className="w-4 h-4 text-oracle-red" />
+                ) : (
+                  <Bookmark className="w-4 h-4 text-muted-foreground hover:text-oracle-red" />
+                )}
+              </Button>
+            )}
           </div>
         )}
         
@@ -78,7 +99,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
           {/* Table Data */}
           {message.tableData && !message.error && (
             <div className="mt-4">
-              <ChatTable data={message.tableData} />
+              <EnhancedTable data={message.tableData} />
             </div>
           )}
         </Card>
