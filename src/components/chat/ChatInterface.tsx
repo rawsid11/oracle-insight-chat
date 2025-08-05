@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Send, Mic, Moon, Sun } from 'lucide-react';
+import { Send, Mic } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ChatMessage } from './ChatMessage';
 import { ThinkingStages } from './ThinkingStages';
+import { SidebarProvider } from '@/components/ui/sidebar';
+import { ChatSidebar } from './ChatSidebar';
 
 interface Message {
   id: string;
@@ -22,38 +24,30 @@ export const ChatInterface = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
   const [currentThinkingStage, setCurrentThinkingStage] = useState<string>('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const thinkingStages = [
-    "🤔 Processing question and analyzing intent...",
-    "📋 Phase 1: Selecting appropriate tools and strategy...",
-    "🔧 Phase 2: Gemini tool selection and parameter optimization...",
-    "⚡ Phase 3: Executing NL2SQL transformation...",
-    "🔨 Phase 4: Querying Oracle database with generated SQL...",
-    "🧠 Phase 5: Interpreting query results and data patterns...",
-    "📊 Phase 6: Formatting response and preparing visualization...",
-    "✅ Finalizing enterprise-grade response..."
+    "🤔 Processing question and analyzing intent",
+    "📋 Phase 1: Selecting appropriate tools and strategy",
+    "🔧 Phase 2: Gemini tool selection and parameter optimization",
+    "⚡ Phase 3: Executing NL2SQL transformation",
+    "🔨 Phase 4: Querying Oracle database with generated SQL",
+    "🧠 Phase 5: Interpreting query results and data patterns",
+    "📊 Phase 6: Formatting response and preparing visualization",
+    "✅ Finalizing enterprise-grade response"
   ];
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, currentThinkingStage]);
 
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [darkMode]);
 
   const simulateThinking = async (): Promise<string> => {
     for (let i = 0; i < thinkingStages.length; i++) {
       setCurrentThinkingStage(thinkingStages[i]);
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await new Promise(resolve => setTimeout(resolve, 2000));
     }
     setCurrentThinkingStage('');
     return "Based on your query, I found 15 sales records across 3 regions in Q2. The highest performing region was North America with $2.3M in total sales.";
@@ -117,115 +111,125 @@ export const ChatInterface = () => {
   };
 
   return (
-    <div className={cn("flex flex-col h-screen", darkMode && "dark")}>
-      {/* Header */}
-      <div className="border-b bg-card border-border p-4">
-        <div className="flex items-center justify-between max-w-4xl mx-auto">
-          <div className="flex items-center gap-3">
-            <img 
-              src="https://www.vectorlogo.zone/logos/oracle/oracle-icon.svg" 
-              alt="Oracle" 
-              className="w-8 h-8"
-            />
-            <div>
-              <h1 className="text-xl font-bold">
-                <span 
-                  className="bg-gradient-to-r from-oracle-red to-oracle-purple bg-clip-text text-transparent"
-                  style={{ fontFamily: 'MuseoSans-700, sans-serif' }}
-                >
-                  Oracle
-                </span>{' '}
-                NL2SQL Assistant
-              </h1>
-              <p className="text-sm text-muted-foreground">Ask questions about your enterprise data</p>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={clearConversation}
-              disabled={messages.length === 0}
-            >
-              Clear Chat
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setDarkMode(!darkMode)}
-            >
-              {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      {/* Chat Messages */}
-      <div className="flex-1 overflow-auto bg-chat-background p-4">
-        <div className="max-w-4xl mx-auto space-y-4">
-          {messages.length === 0 && (
-            <div className="text-center py-12">
-              <img 
-                src="https://www.vectorlogo.zone/logos/oracle/oracle-icon.svg" 
-                alt="Oracle" 
-                className="w-16 h-16 mx-auto mb-4 opacity-20"
-              />
-              <h2 className="text-xl font-semibold mb-2 text-muted-foreground">
-                Welcome to Oracle NL2SQL Assistant
-              </h2>
-              <p className="text-muted-foreground">
-                Ask me anything about your enterprise data in natural language
-              </p>
-            </div>
-          )}
-          
-          {messages.map((message) => (
-            <ChatMessage key={message.id} message={message} />
-          ))}
-          
-          {isLoading && currentThinkingStage && (
-            <ThinkingStages currentStage={currentThinkingStage} />
-          )}
-          
-          <div ref={messagesEndRef} />
-        </div>
-      </div>
-
-      {/* Input Area */}
-      <div className="border-t bg-card border-border p-4">
-        <form onSubmit={handleSubmit} className="max-w-4xl mx-auto">
-          <div className="flex gap-3 items-end">
-            <div className="flex-1 relative">
-              <Textarea
-                ref={textareaRef}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Ask a question about your data..."
-                className="min-h-[52px] max-h-32 resize-none pr-12"
-                disabled={isLoading}
-              />
+    <SidebarProvider>
+      <div className="flex h-screen w-full bg-background">
+        <ChatSidebar />
+        
+        <div className="flex flex-col flex-1">
+          {/* Header */}
+          <div className="border-b bg-card/50 backdrop-blur-sm border-border/50 px-6 py-4 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="p-2 rounded-xl bg-gradient-to-br from-oracle-red/10 to-oracle-purple/10 border border-oracle-red/20">
+                  <img 
+                    src="https://www.vectorlogo.zone/logos/oracle/oracle-icon.svg" 
+                    alt="Oracle" 
+                    className="w-6 h-6"
+                  />
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold">
+                    <span 
+                      className="bg-gradient-to-r from-oracle-red to-oracle-purple bg-clip-text text-transparent"
+                      style={{ fontFamily: 'MuseoSans-700, sans-serif' }}
+                    >
+                      Oracle
+                    </span>{' '}
+                    <span className="text-foreground/80">NL2SQL Assistant</span>
+                  </h1>
+                  <p className="text-sm text-muted-foreground">Ask questions about your enterprise data</p>
+                </div>
+              </div>
+              
               <Button
-                type="button"
-                variant="ghost"
+                variant="outline"
                 size="sm"
-                className="absolute right-2 top-2 h-8 w-8 p-0"
-                disabled={isLoading}
+                onClick={clearConversation}
+                disabled={messages.length === 0}
+                className="border-oracle-red/20 hover:bg-oracle-red/5"
               >
-                <Mic className="w-4 h-4" />
+                Clear Chat
               </Button>
             </div>
-            <Button
-              type="submit"
-              disabled={!input.trim() || isLoading}
-              className="h-[52px] w-[52px] p-0"
-            >
-              <Send className="w-4 h-4" />
-            </Button>
           </div>
-        </form>
+
+          {/* Chat Messages */}
+          <div className="flex-1 overflow-auto bg-gradient-to-b from-background to-muted/20 px-6 py-4">
+            <div className="max-w-4xl mx-auto space-y-6">
+              {messages.length === 0 && (
+                <div className="text-center py-16">
+                  <div className="p-4 rounded-2xl bg-gradient-to-br from-oracle-red/10 to-oracle-purple/10 border border-oracle-red/20 w-fit mx-auto mb-6">
+                    <img 
+                      src="https://www.vectorlogo.zone/logos/oracle/oracle-icon.svg" 
+                      alt="Oracle" 
+                      className="w-12 h-12 opacity-60"
+                    />
+                  </div>
+                  <h2 className="text-2xl font-bold mb-3 bg-gradient-to-r from-oracle-red to-oracle-purple bg-clip-text text-transparent">
+                    Welcome to Oracle NL2SQL Assistant
+                  </h2>
+                  <p className="text-muted-foreground text-lg max-w-md mx-auto">
+                    Ask me anything about your enterprise data in natural language
+                  </p>
+                  <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-3 max-w-2xl mx-auto">
+                    <div className="p-3 bg-card border border-border/50 rounded-lg text-sm text-muted-foreground">
+                      "What is MTD collection in Mumbai?"
+                    </div>
+                    <div className="p-3 bg-card border border-border/50 rounded-lg text-sm text-muted-foreground">
+                      "Show budget achievement by channel"
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {messages.map((message) => (
+                <ChatMessage key={message.id} message={message} />
+              ))}
+              
+              {isLoading && currentThinkingStage && (
+                <ThinkingStages currentStage={currentThinkingStage} />
+              )}
+              
+              <div ref={messagesEndRef} />
+            </div>
+          </div>
+
+          {/* Input Area */}
+          <div className="border-t bg-card/50 backdrop-blur-sm border-border/50 p-6 shadow-lg">
+            <form onSubmit={handleSubmit} className="max-w-4xl mx-auto">
+              <div className="flex gap-4 items-end">
+                <div className="flex-1 relative">
+                  <Textarea
+                    ref={textareaRef}
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Ask a question about your data..."
+                    className="min-h-[56px] max-h-32 resize-none pr-12 border-border/50 focus:border-oracle-red/50 focus:ring-oracle-red/20 bg-background/50 backdrop-blur-sm"
+                    disabled={isLoading}
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-2 top-2 h-8 w-8 p-0 hover:bg-oracle-red/10"
+                    disabled={isLoading}
+                  >
+                    <Mic className="w-4 h-4" />
+                  </Button>
+                </div>
+                <Button
+                  type="submit"
+                  disabled={!input.trim() || isLoading}
+                  className="h-[56px] w-[56px] p-0 bg-gradient-to-r from-oracle-red to-oracle-purple hover:from-oracle-red/90 hover:to-oracle-purple/90 shadow-lg"
+                >
+                  <Send className="w-4 h-4" />
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
-    </div>
+    </SidebarProvider>
   );
 };
