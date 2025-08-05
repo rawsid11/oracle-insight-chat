@@ -5,7 +5,7 @@ import { Send, Mic } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ChatMessage } from './ChatMessage';
 import { ThinkingStages } from './ThinkingStages';
-import { SidebarProvider } from '@/components/ui/sidebar';
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { ChatSidebar } from './ChatSidebar';
 
 interface Message {
@@ -120,6 +120,7 @@ export const ChatInterface = () => {
           <div className="border-b bg-card/50 backdrop-blur-sm border-border/50 px-6 py-4 shadow-sm">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
+                <SidebarTrigger className="h-8 w-8 bg-oracle-red/10 hover:bg-oracle-red/20 border border-oracle-red/20" />
                 <div className="p-2 rounded-xl bg-gradient-to-br from-oracle-red/10 to-oracle-purple/10 border border-oracle-red/20">
                   <img 
                     src="https://www.vectorlogo.zone/logos/oracle/oracle-icon.svg" 
